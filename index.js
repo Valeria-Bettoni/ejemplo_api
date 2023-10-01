@@ -1,9 +1,12 @@
 import { createRequire } from 'node:module'
+import express from 'express'
+import db from './db/connection.js'
+import Producto from './models/producto.js'
+import Usuario from './models/usuario.js'
 
 const require = createRequire(import.meta.url)
 const datos = require('./datos.json')
 
-import express from 'express'
 const html = '<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><ul><li>GET: /productos/</li><li>GET: /productos/id</li>    <li>POST: /productos/</li>    <li>DELETE: /productos/id</li>    <li>PUT: /productos/id</li>    <li>PATCH: /productos/id</li>    <li>GET: /usuarios/</li>    <li>GET: /usuarios/id</li>    <li>POST: /usuarios/</li>    <li>DELETE: /usuarios/id</li>    <li>PUT: /usuarios/id</li>    <li>PATCH: /usuarios/id</li></ul>'
 
 const app = express()
@@ -14,9 +17,9 @@ app.get('/', (req, res) => {
     res.status(200).send(html)
 })
 
-app.get('/productos/', (req, res) =>{
+app.get('/productos/', async (req, res) =>{
     try {
-        let allProducts = datos.productos
+        let allProducts = await Producto.findAll()
 
         res.status(200).json(allProducts)
 
@@ -25,27 +28,33 @@ app.get('/productos/', (req, res) =>{
     }
 })
 
+// REVISAR LA SUMATORIA
 /* 10) Request GET para obtener la sumatoria de los precios individuales de los productos */
-app.get('/productos/precio_total', (req, res) => {
+app.get('/productos/precio_total', async (req, res) => {
     try {
-        const cantidadDeProductos = datos.productos.length
+        const productos = await Producto.findAll()
+
+        const cantidadDeProductos = productos.length
         let precioTotalProductos = 0
 
-        for (const producto of datos.productos){
+        for (const producto of productos){
             precioTotalProductos += producto.precio
         } 
 
-        res.status(200).json({"Cantidad de productos": cantidadDeProductos, "Precio Total de Productos": precioTotalProductos})
+        res.status(200).json({
+            "Cantidad de productos": cantidadDeProductos, 
+            "Precio Total de Productos": precioTotalProductos.toFixed(2)
+        })
    
     } catch (error) {
         res.status(204).json({"message": "error"})
     }
 })
 
-app.get('/productos/:id', (req, res) => {
+app.get('/productos/:id', async (req, res) => {
     try {
         let productoId = parseInt(req.params.id)
-        let productoEncontrado = datos.productos.find((producto) => producto.id === productoId)
+        let productoEncontrado = await Producto.findByPk(productoId)
 
         res.status(200).json(productoEncontrado)
 
@@ -62,10 +71,12 @@ app.post('/productos', (req, res) => {
             bodyTemp += chunk.toString()
         })
     
-        req.on('end', () => {
+        req.on('end', async () => {
             const data = JSON.parse(bodyTemp)
             req.body = data
-            datos.productos.push(req.body)
+            // guardado del nuevo producto
+            const productoNuevo = new Producto(req.body)
+            await productoNuevo.save()
         })
     
         res.status(201).json({"message": "success"})
@@ -76,9 +87,9 @@ app.post('/productos', (req, res) => {
 })
 
 /* 1) Request GET para devolver todos los usuarios */ 
-app.get('/usuarios/', (req, res) => {
+app.get('/usuarios/', async (req, res) => {
     try {
-        let allUsers = datos.usuarios
+        let allUsers = await Usuario.findAll()
         res.status(200).json(allUsers)
     } catch {
         res.status(204).json({"messagge" : error})
@@ -86,10 +97,10 @@ app.get('/usuarios/', (req, res) => {
 })
 
 /* 2) Request GET para devolver un usuario específico */
-app.get('/usuarios/:id', (req, res) => {
+app.get('/usuarios/:id', async (req, res) => {
     try {
         let usuarioId = parseInt(req.params.id)
-        let usuarioEncontrado = datos.usuarios.find((usuario) => usuario.id === usuarioId)
+        let usuarioEncontrado = await Usuario.findByPk(usuarioId)
 
         if (!usuarioEncontrado){
             res.status(204).json({ "message": "Usuario no encontrado"})
@@ -103,10 +114,10 @@ app.get('/usuarios/:id', (req, res) => {
 })
 
 /* 6) Request GET para obtener el precio de un producto que se indica por id */
-app.get('/productos/:id/precio', (req, res) => {
+app.get('/productos/:id/precio', async (req, res) => {
     try {
         let productoId = parseInt(req.params.id)
-        let productoEncontrado = datos.productos.find((producto) => producto.id === productoId)
+        let productoEncontrado = await Producto.findByPk(productoId)
 
         if (!productoEncontrado) {
             res.status(204).json({"message": "Producto no encontrado"})
@@ -119,10 +130,10 @@ app.get('/productos/:id/precio', (req, res) => {
 })
 
 /* 7) Request GET para obtener el nombre de un producto que se indica por ID */
-app.get('/productos/:id/nombre', (req, res) => {
+app.get('/productos/:id/nombre', async (req, res) => {
     try {
         let productoId = parseInt(req.params.id)
-        let productoEncontrado = datos.productos.find((producto) => producto.id === productoId)
+        let productoEncontrado = await Producto.findByPk(productoId)
 
         if (!productoEncontrado) {
             res.status(204).json({"message": "Producto no encontrado"})
@@ -135,10 +146,10 @@ app.get('/productos/:id/nombre', (req, res) => {
 })
 
 /* 8) Request GET para obtener el teéfono de un usuario que se indica por ID */
-app.get('/usuarios/:id/telefono', (req, res) => {
+app.get('/usuarios/:id/telefono', async (req, res) => {
     try {
         let usuarioId = parseInt(req.params.id)
-        let usuarioEncontrado = datos.usuarios.find((usuario) => usuario.id === usuarioId)
+        let usuarioEncontrado = await Usuario.findByPk(usuarioId)
 
         if (!usuarioEncontrado) {
             res.status(204).json({"message": "Usuario no encontrado"})
@@ -151,10 +162,10 @@ app.get('/usuarios/:id/telefono', (req, res) => {
 })
 
 /* 9) Request GET para obtener el nombre de un usuario que se indica por ID */
-app.get('/usuarios/:id/nombre', (req, res) => {
+app.get('/usuarios/:id/nombre', async (req, res) => {
     try {
         let usuarioId = parseInt(req.params.id)
-        let usuarioEncontrado = datos.usuarios.find((usuario) => usuario.id === usuarioId)
+        let usuarioEncontrado = await Usuario.findByPk(usuarioId)
 
         if (!usuarioEncontrado) {
             res.status(204).json({"message": "Usuario no encontrado"})
@@ -175,10 +186,12 @@ app.post('/usuarios', (req, res) => {
             bodyTemp += chunk.toString()
         })
 
-        req.on('end', () => {
+        req.on('end', async () => {
             const data = JSON.parse(bodyTemp)
             req.body = data
-            datos.usuarios.push(req.body)
+            
+            const usuarioNuevo = new Usuario(req.body)
+            await usuarioNuevo.save()
         })
 
         res.status(201).json({"messagge":"success"})
@@ -189,119 +202,105 @@ app.post('/usuarios', (req, res) => {
 })
 
 
-app.patch('/productos/:id', (req, res) => {
+app.patch('/productos/:id', async (req, res) => {
     let idProductoAEditar = parseInt(req.params.id)
-    let productoAActualizar = datos.productos.find((producto) => producto.id === idProductoAEditar)
+    try {
+        let productoAActualizar = await Producto.findByPk(idProductoAEditar)
 
-    if (!productoAActualizar) {
-        res.status(204).json({"message":"Producto no encontrado"})
+        if (!productoAActualizar) {
+            return res.status(204).json({"mensage":"Producto no encontrado"})
+        }
+
+        let bodyTemp = ''
+
+        req.on('data', (chunk) => {
+            bodyTemp += chunk.toString()
+        }) 
+
+        req.on('end', async () => {
+            const data = JSON.parse(bodyTemp)
+            req.body = data
+            await productoAActualizar.update(req.body)
+            res.status(200).send('Producto actualizado')
+        })
+    } catch (error) {
+        res.status(204).json({"message": "Producto no encontrado"})
     }
-
-    let bodyTemp = ''
-
-    req.on('data', (chunk) => {
-        bodyTemp += chunk.toString()
-    })
-
-    req.on('end', () => {
-        const data = JSON.parse(bodyTemp)
-        req.body = data
-        
-        if(data.nombre){
-            productoAActualizar.nombre = data.nombre
-        }
-        
-        if (data.tipo){
-            productoAActualizar.tipo = data.tipo
-        }
-
-        if (data.precio){
-            productoAActualizar.precio = data.precio
-        }
-
-        res.status(200).send('Producto actualizado')
-    })
 })
 
 /* 4) Request PATCH para actualizar un dato de un usuario */
-app.patch('/usuarios/:id', (req, res) => {
+app.patch('/usuarios/:id', async (req, res) => {
     let idUsuarioAEditar = parseInt(req.params.id)
-    let usurioAActualizar = datos.usuarios.find((usuario) => usuario.id === idUsuarioAEditar)
+    try {
+        let usuarioAActualizar = await Usuarioo.findByPk(idUsuarioAEditar)
 
-    if (!usurioAActualizar){
-        res.status(204).json({"messagge": "Usuario no encontrado"})
+        if (!usuarioAActualizar) {
+            return res.status(204).json({"mensage":"Usuario no encontrado"})
+        }
+
+        let bodyTemp = ''
+
+        req.on('data', (chunk) => {
+            bodyTemp += chunk.toString()
+        }) 
+
+        req.on('end', async () => {
+            const data = JSON.parse(bodyTemp)
+            req.body = data
+            await usuarioAActualizar.update(req.body)
+            res.status(200).send('Usuario actualizado')
+        })
+    } catch (error) {
+        res.status(204).json({"message": "Usuario no encontrado"})
     }
-    
-    let bodyTemp = ''
-
-    req.on('data', (chunk) => {
-        bodyTemp += chunk.toString()
-    })
-
-    req.on('end', () => {
-        const data = JSON.parse(bodyTemp)
-        req.body = data 
-
-        if (data.nombre){
-            usuarioAActualizar.nombre = data.nombre
-        }
-        if (data.edad){
-            usuarioAActualizar.edad = data.edad
-        }
-        if (data.email) {
-            usuarioAActualizar.email = data.email
-        }
-        if (data.telefono) {
-            usuarioAActualizar.telefono = data.telefono
-        }
-
-        res.status(200).send('Usuario actualizado')
-    })
 })
 
-app.delete('/productos/:id', (req, res) => {
+app.delete('/productos/:id', async (req, res) => {
     let idProductoABorrar = parseInt(req.params.id)
-    let productoABorrar = datos.productos.find((producto) => producto.id === idProductoABorrar)
 
-    if (!productoABorrar){
-        res.status(204).json({"message":"Producto no encontrado"})
-    }
-
-    let indiceProductoABorrar = datos.productos.indexOf(productoABorrar)
     try {
-         datos.productos.splice(indiceProductoABorrar, 1)
-    res.status(200).json({"message": "success"})
+        let productoABorrar = await Producto.findByPk(idProductoABorrar)
+
+        if (!productoABorrar) {
+            return res.status(204).json({"message": "Producto no encontrado"})
+        }
+        await idProductoABorrar.destroy()
+        res.status(200).json({"message": "Producto borrado"})
 
     } catch (error) {
-        res.status(204).json({"message": "error"})
+        res.status(204).json({message: Error})
     }
 })
 
 
 /* 5) Request DELETE para borrar un usuario de los datos */
-app.delete('/usuarios/:id', (req, res) => {
+app.delete('/usuarios/:id', async (req, res) => {
     let idUsuarioABorrar = parseInt(req.params.id)
-    let usuarioABorrar = datos.usuarios.find((usuario) => usuario.id === idUsuarioABorrar)
-
-    if (!usuarioABorrar){
-        res.status(204).json({"message": "Usuario no encontrado"})
-    }
-
-    let indiceUsuarioABorrar = datos.usuarios.indexOf(usuarioABorrar)
 
     try {
-        datos.usuarios.splice(indiceUsuarioABorrar, 1)
-        res.status(200).json({"message": "success"})
-        
-    } catch (error) {
-        res.status(204).json({"message": "error"})
+        let usuarioABorrar = await Producto.findByPk(idUsuarioABorrar)
 
+        if (!usuarioABorrar) {
+            return res.status(204).json({"message": "Usuario no encontrado"})
+        }
+        await idUsuarioABorrar.destroy()
+        res.status(200).json({"message": "Usuario borrado"})
+
+    } catch (error) {
+        res.status(204).json({message: Error})
     }
 })
 
 app.use((req, res) => {
     res.status(404).send('<h1>404</h1>')
 })
+
+try {
+    await db.authenticate()
+    console.log('Conexion con la DDBB establecida.')
+} catch (error) {
+    console.log('Error de conexion db')
+}
 
 app.listen( exposedPort, () => {
     console.log('Servidor escuchando en http://localhost:' + exposedPort)
