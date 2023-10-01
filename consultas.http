@@ -2,7 +2,7 @@
 GET http://localhost:1234/productos/
 
 ### Obtención de un producto específico
-GET http://localhost:1234/productos/3/
+GET http://localhost:1234/productos/5/
 
 ### Obtención de todos los usuarios
 GET http://localhost:1234/usuarios/
