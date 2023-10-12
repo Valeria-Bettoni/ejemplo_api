@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module'
+import bodyParser from 'body-parser'
 import express from 'express'
 import db from './db/connection.js'
 import Producto from './models/producto.js'
@@ -11,13 +12,33 @@ import remove from './services/remove.js'
 import getInfo from './services/getInfo.js'
 
 const html = '<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><ul><li>GET: /productos/</li><li>GET: /productos/id</li>    <li>POST: /productos/</li>    <li>DELETE: /productos/id</li>    <li>PUT: /productos/id</li>    <li>PATCH: /productos/id</li>    <li>GET: /usuarios/</li>    <li>GET: /usuarios/id</li>    <li>POST: /usuarios/</li>    <li>DELETE: /usuarios/id</li>    <li>PUT: /usuarios/id</li>    <li>PATCH: /usuarios/id</li></ul>'
-
 const app = express()
-
 const exposedPort = 1234
+
+var jsonParser = bodyParser.json()
+app.use(jsonParser)
 
 app.get('/', (req, res) => {
     res.status(200).send(html)
+})
+
+app.use((req, res, next) => {
+    if ((req.method !== 'POST') && (req.method !== 'PATCH')) {return next()}
+
+    if (req.headers['Content-Type'] !== 'application/json') {return next()}
+
+    let bodyTemp = ''
+
+    req.on('data', (chunk) => {
+        bodyTemp += chunk.toString()
+    })
+
+    req.on('end', () => {
+        const data = JSON.parse(bodyTemp)
+        req.body = data
+
+        next()
+    })
 })
 
 app.get('/productos/', async (req, res) =>{

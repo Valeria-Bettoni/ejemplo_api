@@ -41,11 +41,11 @@ POST http://localhost:1234/usuarios
 Content-Type: application/json
 
 {
-    "dni": 11556789,
-    "nombre": "Juana De Arco",
-    "edad": 38,
-    "email": "juanaDeArco@example.com",
-    "telefono": "+1 123-456-6375"
+    "dni": 115116117,
+    "nombre": "Pedro",
+    "apellido": "Picapiedra",
+    "email": "pedroPicapiedra@example.com",
+    "telefono": "+1 123-456-8888"
 }
 
 ### Actualización de un producto, el body lleva solo el atributo a modificar
