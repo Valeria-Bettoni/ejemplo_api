@@ -2,13 +2,13 @@
 GET http://localhost:1234/productos/
 
 ### Obtención de un producto específico
-GET http://localhost:1234/productos/3/
+GET http://localhost:1234/productos/5/
 
 ### Obtención de todos los usuarios
 GET http://localhost:1234/usuarios/
 
 ### Obtención de un usuario específico 
-GET http://localhost:1234/usuarios/7/
+GET http://localhost:1234/usuarios/45678901/
 
 ### Obtención del precio de un producto especifico
 GET http://localhost:1234/productos/3/precio 
@@ -17,10 +17,10 @@ GET http://localhost:1234/productos/3/precio
 GET http://localhost:1234/productos/4/nombre
 
 ### Obtención del telefono de un usuario especifico
-GET http://localhost:1234/usuarios/5/telefono
+GET http://localhost:1234/usuarios/45678901/telefono
 
 ### Obtención del nombre de un usuario especifico
-GET http://localhost:1234/usuarios/6/nombre
+GET http://localhost:1234/usuarios/45678901/nombre
 
 ### Obtencion de la sumatoria total de los precios de los productos
 GET http://localhost:1234/productos/precio_total 
@@ -41,7 +41,7 @@ POST http://localhost:1234/usuarios
 Content-Type: application/json
 
 {
-    "id": 11,
+    "dni": 11556789,
     "nombre": "Juana De Arco",
     "edad": 38,
     "email": "juanaDeArco@example.com",
@@ -57,7 +57,7 @@ Content-Type: application/json
 }
 
 ### Actualización de un usuario, el body lleva solo el atributo a modificar
-PATCH http://localhost:1234/usuarios/2
+PATCH http://localhost:1234/usuarios/45678901
 Content-Type: application/json
 
 {
@@ -65,7 +65,7 @@ Content-Type: application/json
 }
 
 ### Borrado de un producto
-DELETE http://localhost:1234/productos/8
+DELETE http://localhost:1234/productos/1
 
 ### Borrado de un usuario 
-DELETE http://localhost:1234/usuarios/5
+DELETE http://localhost:1234/usuarios/45678901
