@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module'
 import bodyParser from 'body-parser'
 import express from 'express'
+import jwt from 'jsonwebtoken'
 import db from './db/connection.js'
 import Producto from './models/producto.js'
 import Usuario from './models/usuario.js'
@@ -15,6 +16,33 @@ const html = '<h1>Bienvenido a la API</h1><p>Los comandos disponibles son:</p><u
 const app = express()
 const exposedPort = 1234
 
+//Middleware para la validación de los token recibidos
+function tokenAuthentication(req, res, next) {
+    const headerAuthorization = req.headers['authorization']
+    const tokenRecibed = headerAuthorization.split(' ')[1]
+
+    if (tokenRecibed == null) {
+        return res.status(401).json({message: "Invalid token"})
+    }
+
+    let payload = null
+
+    try {
+        //Itentamos obtener el payload del token
+        payload = jwt.verify(tokenRecibed, process.env.SECRET_KEY)
+    } catch (error) {
+        return res.status(401).json({message: "Invalid token"})
+    }
+
+    if (Date.now() > payload.exp){
+        return res.status(401).json({message: "Token esxpired"})
+    }
+
+    // Pasadas las validaciones
+    req.user = payload.sub
+    next()
+}
+
 var jsonParser = bodyParser.json()
 app.use(jsonParser)
 
@@ -22,6 +50,45 @@ app.get('/', (req, res) => {
     res.status(200).send(html)
 })
 
+//Endpoint para validar el login
+app.post('/auth', async(req, res) => {
+    //Obtener los datos de login
+    const userToSearch = req.body.username
+    const passwordRecibed = req.body.password 
+
+    let userFound = ''
+
+    //Comprobación del usuario
+    try {
+        userFound = await Usuario.findAll({where:{username:userToSearch}})
+        
+        if (userFound == ''){return res.status(400).json({message:"User not found"})}
+    } catch (error) {
+        return res.status(400).json({message:"User not found"})
+    }
+
+    //Comprobación del password
+    if (userFound[0].password !== passwordRecibed) {
+        return res.status(400).json({message:"Incorrect password"})
+    }
+
+    //Generación de token
+    const sub = userFound[0].dni
+    const username = userFound[0].username
+    const level = userFound[0].level
+    
+    //Firma y construcción del token 
+    const token = jwt.sign({
+        sub,
+        username,
+        level,
+        exp: Date.now() + (60*1000) //1 minuto expresado en milisegundos
+    }, process.env.SECRET_KEY)
+
+    res.status(200).json({accessToken: token })
+})
+
+//Middleware
 app.use((req, res, next) => {
     if ((req.method !== 'POST') && (req.method !== 'PATCH')) {return next()}
 
@@ -54,7 +121,7 @@ app.get('/productos/precio_total', async (req, res) => {
         let precioTotalProductos = 0
 
         for (const producto of productos){
-            precioTotalProductos += producto.precio
+            precioTotalProductos += producto.price
         } 
 
         res.status(200).json({
@@ -71,7 +138,7 @@ app.get('/productos/:id', async (req, res) => {
    select(Producto, req.params.id, res);
 })
 
-app.post('/productos', (req, res) => {
+app.post('/productos', tokenAuthentication, (req, res) => {
     add(req, Producto, res);
 })
 
@@ -85,14 +152,14 @@ app.get('/usuarios/:id', async (req, res) => {
     select(Usuario, req.params.id, res)
 })
 
-/* 6) Request GET para obtener el precio de un producto que se indica por id */
-app.get('/productos/:id/precio', async (req, res) => {
-    getInfo(Producto, req.params.id, 'precio', res);
+/* 6) Request GET para obtener el price de un producto que se indica por id */
+app.get('/productos/:id/price', async (req, res) => {
+    getInfo(Producto, req.params.id, 'price', res);
 })
 
 /* 7) Request GET para obtener el nombre de un producto que se indica por ID */
-app.get('/productos/:id/nombre', async (req, res) => {
-    getInfo(Producto, req.params.id, 'nombre', res);
+app.get('/productos/:id/name', async (req, res) => {
+    getInfo(Producto, req.params.id, 'name', res);
 
 })
 
@@ -102,31 +169,31 @@ app.get('/usuarios/:id/telefono', async (req, res) => {
 })
 
 /* 9) Request GET para obtener el nombre de un usuario que se indica por ID */
-app.get('/usuarios/:id/nombre', async (req, res) => {
-    getInfo(Usuario, req.params.id, 'nombre', res);
+app.get('/usuarios/:id/name', async (req, res) => {
+    getInfo(Usuario, req.params.id, 'name', res);
 })
 
 /* 3) Request POST para agregar un nuevo usuario*/ 
-app.post('/usuarios', (req, res) => {
+app.post('/usuarios', tokenAuthentication,(req, res) => {
     add(req, Usuario, res);
 })
 
-app.patch('/productos/:id', async (req, res) => {
+app.patch('/productos/:id', tokenAuthentication, async (req, res) => {
     update(req, Producto, req.params.id, res);
 
 })
 
 /* 4) Request PATCH para actualizar un dato de un usuario */
-app.patch('/usuarios/:id', async (req, res) => {
+app.patch('/usuarios/:id', tokenAuthentication,async (req, res) => {
     update(req, Usuario, req.params.id, res);
 })
 
-app.delete('/productos/:id', async (req, res) => {
+app.delete('/productos/:id', tokenAuthentication, async (req, res) => {
     remove(Producto, req.params.id, res);
 })
 
 /* 5) Request DELETE para borrar un usuario de los datos */
-app.delete('/usuarios/:id', async (req, res) => {
+app.delete('/usuarios/:id', tokenAuthentication,async (req, res) => {
     remove(Usuario, req.params.id, res);
 })
 

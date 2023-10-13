@@ -2,70 +2,70 @@
     "usuarios": [
       {
         "id": 1,
-        "nombre": "Juan Pérez",
+        "name": "Juan Pérez",
         "edad": 28,
         "email": "juan@example.com",
         "telefono": "+1 123-456-7890"
       },
       {
         "id": 2,
-        "nombre": "María Rodríguez",
+        "name": "María Rodríguez",
         "edad": 24,
         "email": "maria@example.com",
         "telefono": "+1 234-567-8901"
       },
       {
         "id": 3,
-        "nombre": "Carlos Sánchez",
+        "name": "Carlos Sánchez",
         "edad": 32,
         "email": "carlos@example.com",
         "telefono": "+1 345-678-9012"
       },
       {
         "id": 4,
-        "nombre": "Luisa González",
+        "name": "Luisa González",
         "edad": 22,
         "email": "luisa@example.com",
         "telefono": "+1 456-789-0123"
       },
       {
         "id": 5,
-        "nombre": "Ana Martínez",
+        "name": "Ana Martínez",
         "edad": 30,
         "email": "ana@example.com",
         "telefono": "+1 567-890-1234"
       },
       {
         "id": 6,
-        "nombre": "Pedro López",
+        "name": "Pedro López",
         "edad": 29,
         "email": "pedro@example.com",
         "telefono": "+1 678-901-2345"
       },
       {
         "id": 7,
-        "nombre": "Laura Fernández",
+        "name": "Laura Fernández",
         "edad": 27,
         "email": "laura@example.com",
         "telefono": "+1 789-012-3456"
       },
       {
         "id": 8,
-        "nombre": "Miguel Torres",
+        "name": "Miguel Torres",
         "edad": 26,
         "email": "miguel@example.com",
         "telefono": "+1 890-123-4567"
       },
       {
         "id": 9,
-        "nombre": "Sofía Pérez",
+        "name": "Sofía Pérez",
         "edad": 25,
         "email": "sofia@example.com",
         "telefono": "+1 901-234-5678"
       },
       {
         "id": 10,
-        "nombre": "David Ramírez",
+        "name": "David Ramírez",
         "edad": 31,
         "email": "david@example.com",
         "telefono": "+1 012-345-6789"
@@ -74,63 +74,63 @@
     "productos": [
       {
         "id": 1,
-        "nombre": "Lavadora",
-        "tipo": "Electrodoméstico",
-        "precio": 499.99
+        "name": "Lavadora",
+        "type": "Electrodoméstico",
+        "price": 499.99
       },
       {
         "id": 2,
-        "nombre": "Refrigerador",
-        "tipo": "Electrodoméstico",
-        "precio": 699.99
+        "name": "Refrigerador",
+        "type": "Electrodoméstico",
+        "price": 699.99
       },
       {
         "id": 3,
-        "nombre": "Horno de microondas",
-        "tipo": "Electrodoméstico",
-        "precio": 129.99
+        "name": "Horno de microondas",
+        "type": "Electrodoméstico",
+        "price": 129.99
       },
       {
         "id": 4,
-        "nombre": "Licuadora",
-        "tipo": "Electrodoméstico",
-        "precio": 49.99
+        "name": "Licuadora",
+        "type": "Electrodoméstico",
+        "price": 49.99
       },
       {
         "id": 5,
-        "nombre": "Televisor LED",
-        "tipo": "Electrodoméstico",
-        "precio": 799.99
+        "name": "Televisor LED",
+        "type": "Electrodoméstico",
+        "price": 799.99
       },
       {
         "id": 6,
-        "nombre": "Cafetera",
-        "tipo": "Electrodoméstico",
-        "precio": 89.99
+        "name": "Cafetera",
+        "type": "Electrodoméstico",
+        "price": 89.99
       },
       {
         "id": 7,
-        "nombre": "Aspiradora",
-        "tipo": "Electrodoméstico",
-        "precio": 149.99
+        "name": "Aspiradora",
+        "type": "Electrodoméstico",
+        "price": 149.99
       },
       {
         "id": 8,
-        "nombre": "Batidora",
-        "tipo": "Electrodoméstico",
-        "precio": 59.99
+        "name": "Batidora",
+        "type": "Electrodoméstico",
+        "price": 59.99
       },
       {
         "id": 9,
-        "nombre": "Lavaplatos",
-        "tipo": "Electrodoméstico",
-        "precio": 399.99
+        "name": "Lavaplatos",
+        "type": "Electrodoméstico",
+        "price": 399.99
       },
       {
         "id": 10,
-        "nombre": "Secadora de ropa",
-        "tipo": "Electrodoméstico",
-        "precio": 349.99
+        "name": "Secadora de ropa",
+        "type": "Electrodoméstico",
+        "price": 349.99
       }
     ]
   }

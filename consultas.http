@@ -11,29 +11,30 @@ GET http://localhost:1234/usuarios/
 GET http://localhost:1234/usuarios/12345678/
 
 ### Obtención del precio de un producto especifico
-GET http://localhost:1234/productos/3/precio 
+GET http://localhost:1234/productos/3/price 
 
 ### Obtención del nombre de un producto específico
-GET http://localhost:1234/productos/4/nombre
+GET http://localhost:1234/productos/4/name
 
 ### Obtención del telefono de un usuario especifico
 GET http://localhost:1234/usuarios/12345678/telefono
 
 ### Obtención del nombre de un usuario especifico
-GET http://localhost:1234/usuarios/12345678/nombre
+GET http://localhost:1234/usuarios/12345678/name
 
 ### Obtencion de la sumatoria total de los precios de los productos
-GET http://localhost:1234/productos/precio_total 
+GET http://localhost:1234/productos/price_total 
 
 ### Agregado de un producto nuevo, el body lleva el json con el objeto
 POST http://localhost:1234/productos
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY3ODkwMTIzLCJ1c2VybmFtZSI6ImxhdXJpdGFGbmR6IiwibGV2ZWwiOjEsImV4cCI6MTY5NzIxOTAxMTA3NSwiaWF0IjoxNjk3MjE4OTUxfQ.Ps6A-bLLx6AD6-MtO9Kklm-Hx17MfdzZ846Wq-PWfsY
 
 {
-    "id": 11,
-    "nombre": "Mixer multiuso ACME",
-    "tipo": "Electrodoméstico de cocina",
-    "precio": 150.15
+    "id": 13,
+    "name": "Adaptador USB",
+    "type": "Cables",
+    "price": 3.50
 }
 
 ### Agregado de un usuario nuevo, el body lleva el json con el objeto
@@ -42,7 +43,7 @@ Content-Type: application/json
 
 {
     "dni": 115116117,
-    "nombre": "Pedro",
+    "name": "Pedro",
     "apellido": "Picapiedra",
     "email": "pedroPicapiedra@example.com",
     "telefono": "+1 123-456-8888"
@@ -53,7 +54,7 @@ PATCH http://localhost:1234/productos/10
 Content-Type: application/json
 
 {
-    "nombre": "Mixer multiuso ACME PODEROSO"
+    "name": "Mixer multiuso ACME PODEROSO"
 }
 
 ### Actualización de un usuario, el body lleva solo el atributo a modificar
@@ -69,3 +70,12 @@ DELETE http://localhost:1234/productos/1
 
 ### Borrado de un usuario 
 DELETE http://localhost:1234/usuarios/45678901
+
+### Request desde el frontend para el login
+POST http://localhost:1234/auth
+Content-Type: application/json
+
+{
+    "username":"lauritaFndz", 
+    "password": "lauritaFndzPW"
+}

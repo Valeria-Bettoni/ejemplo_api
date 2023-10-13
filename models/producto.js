@@ -4,9 +4,9 @@ import { DataTypes } from 'sequelize'
 // Porducto será la variable con la que trabajaremos, 'Producto' debe coincidir con el nombre de la tabla de la bd (con o sin s final)
 const Producto = db.define('Producto', 
     {
-        nombre: { type: DataTypes.STRING },
-        tipo: { type: DataTypes.STRING},
-        precio: { type: DataTypes.DOUBLE}
+        name: { type: DataTypes.STRING },
+        type: { type: DataTypes.STRING},
+        price: { type: DataTypes.DOUBLE}
     },
     {
         tableName: 'productos', //la tabla real con la que se relaciona el modelo
